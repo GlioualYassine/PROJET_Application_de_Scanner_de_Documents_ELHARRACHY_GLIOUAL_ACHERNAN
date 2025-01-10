@@ -6,6 +6,22 @@ android {
     namespace 'ensa.application01.projetocr'
     compileSdk 34
 
+    // Ajouter packagingOptions ici
+    packagingOptions {
+        resources {
+            excludes += [
+                    'META-INF/DEPENDENCIES',
+                    'META-INF/LICENSE',
+                    'META-INF/LICENSE.txt',
+                    'META-INF/license.txt',
+                    'META-INF/NOTICE',
+                    'META-INF/NOTICE.txt',
+                    'META-INF/notice.txt',
+                    'META-INF/ASL2.0'
+            ]
+        }
+    }
+
     defaultConfig {
         applicationId "ensa.application01.projetocr"
         minSdk 25
@@ -23,8 +39,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildFeatures {
+        viewBinding true
     }
 }
 
@@ -34,6 +53,10 @@ dependencies {
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+    implementation libs.navigation.fragment
+    implementation libs.navigation.ui
+    implementation 'org.apache.pdfbox:pdfbox:2.0.27'
+
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

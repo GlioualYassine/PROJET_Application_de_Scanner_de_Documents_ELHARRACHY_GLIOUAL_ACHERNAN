@@ -5,32 +5,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     tools:context=".MainActivity">
 
-    <!-- Bouton pour scanner un document -->
-    <Button
-        android:id="@+id/btnScanDocument"
-        android:layout_width="0dp"
+    <!-- Titre de la page -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Scanner un Document"
-        android:textSize="16sp"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#6200EE"
+        android:text="Menu Principal"
+        android:textSize="24sp"
+        android:textColor="#000"
+        android:fontFamily="sans-serif-medium"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" />
 
-    <!-- Aperçu de l'image capturée -->
-    <ImageView
-        android:id="@+id/imageViewPreview"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_margin="16dp"
-        android:scaleType="centerCrop"
-        android:background="#E0E0E0"
-        app:layout_constraintTop_toBottomOf="@id/btnScanDocument"
+    <!-- Bouton pour scanner un document avec une icône -->
+    <LinearLayout
+        android:id="@+id/btnCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground">
 
+        <ImageView
+            android:id="@+id/icCamera"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_camera"
+            android:contentDescription="Caméra" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Caméra"
+            android:textSize="14sp"
+            android:textColor="#000" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
