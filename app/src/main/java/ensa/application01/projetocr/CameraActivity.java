@@ -42,43 +42,33 @@ public class CameraActivity extends AppCompatActivity {
 
         imageViewPreview = findViewById(R.id.imageViewPreview);
         Button btnCaptureImage = findViewById(R.id.btnCaptureImage);
-        Button btnOCR = findViewById(R.id.btnOCR);
         Button btnToPDF = findViewById(R.id.btnToPDF);
-        Button btnToCategories = findViewById(R.id.btnToCategories);
 
-        // Vérifier et demander la permission de la caméra
+        // Vérifier les permissions pour la caméra
         checkCameraPermission();
 
-        // Capturer une image
+        // Capture de l'image
         btnCaptureImage.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
-                Toast.makeText(this, "Permission de la caméra non accordée.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission caméra refusée.", Toast.LENGTH_SHORT).show();
                 checkCameraPermission();
             }
         });
 
-        // Naviguer vers la page OCR
-        btnOCR.setOnClickListener(v -> {
-            Intent intent = new Intent(CameraActivity.this, OCRActivity.class);
-            startActivity(intent);
-        });
-
-        // Naviguer vers la page de conversion en PDF
+        // Envoyer l'image vers la PDFActivity
         btnToPDF.setOnClickListener(v -> {
-            Intent intent = new Intent(CameraActivity.this, PDFActivity.class);
-            startActivity(intent);
-        });
-
-        // Naviguer vers la page d'organisation par catégories
-        btnToCategories.setOnClickListener(v -> {
-            Intent intent = new Intent(CameraActivity.this, CategoriesActivity.class);
-            startActivity(intent);
+            if (photoUri != null) {
+                Intent intent = new Intent(CameraActivity.this, PDFActivity.class);
+                intent.putExtra("photoUri", photoUri.toString());
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Aucune image capturée pour la conversion.", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
-    // Vérifier et demander la permission de la caméra
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
@@ -90,9 +80,9 @@ public class CameraActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission de la caméra accordée.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission caméra accordée.", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Permission de la caméra refusée.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission caméra refusée.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -112,14 +102,17 @@ public class CameraActivity extends AppCompatActivity {
                 Toast.makeText(this, "Erreur lors de la création du fichier.", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, "Aucune application de caméra détectée.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Aucune application de caméra trouvée.", Toast.LENGTH_SHORT).show();
         }
     }
 
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "MyCapturedImages");
+        if (!storageDir.exists()) {
+            storageDir.mkdirs();
+        }
         return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
@@ -127,8 +120,12 @@ public class CameraActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
-            Bitmap bitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-            imageViewPreview.setImageBitmap(bitmap);
+            if (photoFile != null) {
+                Bitmap bitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+                imageViewPreview.setImageBitmap(bitmap);
+            } else {
+                Toast.makeText(this, "Erreur : fichier photo introuvable.", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(this, "Capture annulée ou échouée.", Toast.LENGTH_SHORT).show();
         }

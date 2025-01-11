@@ -3,29 +3,26 @@ package ensa.application01.projetocr;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.layout.element.Image;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 public class PDFActivity extends AppCompatActivity {
@@ -33,8 +30,9 @@ public class PDFActivity extends AppCompatActivity {
     private ImageView imageViewPreview;
     private ProgressBar progressBar;
     private Button btnConvertToPDF, btnDownloadPDF;
-    private Bitmap testBitmap;
-    private Uri savedPdfUri;
+    private Bitmap imageBitmap;
+
+    private Uri pdfUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,134 +44,131 @@ public class PDFActivity extends AppCompatActivity {
         btnConvertToPDF = findViewById(R.id.btnConvertToPDF);
         btnDownloadPDF = findViewById(R.id.btnDownloadPDF);
 
-        // Charger une image de test
-        testBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
-        if (testBitmap != null) {
-            imageViewPreview.setImageBitmap(testBitmap);
-        } else {
-            Toast.makeText(this, "Erreur : Impossible de charger l'image de test.", Toast.LENGTH_SHORT).show();
+        // Charger l'image
+        Intent intent = getIntent();
+        String photoUriString = intent.getStringExtra("photoUri");
+        if (photoUriString != null) {
+            Uri photoUri = Uri.parse(photoUriString);
+            try {
+                imageBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(photoUri));
+                imageBitmap = correctImageOrientation(photoUri); // Corrige l'orientation
+                imageViewPreview.setImageBitmap(imageBitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Erreur lors du chargement de l'image.", Toast.LENGTH_SHORT).show();
+            }
         }
 
-        // Bouton pour convertir en PDF
+        // Convertir en PDF
         btnConvertToPDF.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                createPdfUsingScopedStorage();
+            if (imageBitmap != null) {
+                createPdfDocument();
             } else {
-                savePdfToLegacyStorage(testBitmap);
+                Toast.makeText(this, "Aucune image à convertir.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Bouton pour afficher l'URI du fichier enregistré
+        // Télécharger le PDF
         btnDownloadPDF.setOnClickListener(v -> {
-            if (savedPdfUri != null) {
-                Toast.makeText(this, "PDF enregistré à l'emplacement : " + savedPdfUri.toString(), Toast.LENGTH_LONG).show();
+            if (pdfUri != null) {
+                openPDF(pdfUri);
             } else {
-                Toast.makeText(this, "Aucun PDF disponible à télécharger.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Aucun fichier PDF disponible.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // Créer un PDF à l'aide de Scoped Storage (Android 10+)
-    private void createPdfUsingScopedStorage() {
+    private void createPdfDocument() {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/pdf");
-        intent.putExtra(Intent.EXTRA_TITLE, "ImageToPDF.pdf");
-        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse("Documents"));
-        savePdfLauncher.launch(intent);
+        intent.putExtra(Intent.EXTRA_TITLE, "CapturedImage.pdf");
+        startActivityForResult(intent, 101);
     }
 
-    private final ActivityResultLauncher<Intent> savePdfLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    savedPdfUri = result.getData().getData();
-                    savePdfToUri(savedPdfUri, testBitmap);
-                } else {
-                    Toast.makeText(this, "PDF non enregistré.", Toast.LENGTH_SHORT).show();
-                }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == RESULT_OK) {
+            if (data != null && data.getData() != null) {
+                pdfUri = data.getData();
+                savePdfToUri(pdfUri);
             }
-    );
+        }
+    }
 
-    // Enregistrer le PDF dans une URI spécifique
-    private void savePdfToUri(Uri uri, Bitmap bitmap) {
+    private void savePdfToUri(Uri uri) {
         progressBar.setVisibility(android.view.View.VISIBLE);
 
         new Thread(() -> {
             try {
-                PDDocument document = new PDDocument();
-                PDPage page = new PDPage(new PDRectangle(bitmap.getWidth(), bitmap.getHeight()));
-                document.addPage(page);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                ImageData imageData = ImageDataFactory.create(stream.toByteArray());
 
-                File tempFile = File.createTempFile("tempImage", ".jpg", getCacheDir());
-                FileOutputStream fos = new FileOutputStream(tempFile);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                fos.close();
+                OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                PdfWriter writer = new PdfWriter(outputStream);
+                PdfDocument pdfDocument = new PdfDocument(writer);
+                Document document = new Document(pdfDocument);
 
-                PDPageContentStream contentStream = new PDPageContentStream(document, page);
-                org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject pdfImage =
-                        JPEGFactory.createFromStream(document, new java.io.FileInputStream(tempFile));
-                contentStream.drawImage(pdfImage, 0, 0, bitmap.getWidth(), bitmap.getHeight());
-                contentStream.close();
-
-                try (OutputStream outputStream = getContentResolver().openOutputStream(uri)) {
-                    if (outputStream != null) {
-                        document.save(outputStream);
-                    }
-                }
+                // Ajouter l'image au PDF
+                Image image = new Image(imageData);
+                image.setAutoScale(true); // S'adapte à la largeur du PDF
+                document.add(image);
                 document.close();
 
                 runOnUiThread(() -> {
                     progressBar.setVisibility(android.view.View.GONE);
-                    Toast.makeText(this, "PDF enregistré avec succès !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "PDF créé avec succès !", Toast.LENGTH_LONG).show();
                 });
 
             } catch (Exception e) {
                 e.printStackTrace();
                 runOnUiThread(() -> {
                     progressBar.setVisibility(android.view.View.GONE);
-                    Toast.makeText(this, "Erreur lors de la création du PDF.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Erreur lors de la création du PDF : " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             }
         }).start();
     }
 
-    // Pour Android 9 ou inférieur : enregistrer dans Téléchargements
-    private void savePdfToLegacyStorage(Bitmap bitmap) {
-        progressBar.setVisibility(android.view.View.VISIBLE);
+    private void openPDF(Uri uri) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, "application/pdf");
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Aucune application disponible pour ouvrir le PDF.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
-        new Thread(() -> {
-            try {
-                PDDocument document = new PDDocument();
-                PDPage page = new PDPage(new PDRectangle(bitmap.getWidth(), bitmap.getHeight()));
-                document.addPage(page);
+    private Bitmap correctImageOrientation(Uri photoUri) {
+        try {
+            String filePath = photoUri.getPath();
+            ExifInterface exif = new ExifInterface(getContentResolver().openInputStream(photoUri));
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
 
-                File tempFile = File.createTempFile("tempImage", ".jpg", getCacheDir());
-                FileOutputStream fos = new FileOutputStream(tempFile);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                fos.close();
-
-                PDPageContentStream contentStream = new PDPageContentStream(document, page);
-                org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject pdfImage =
-                        JPEGFactory.createFromStream(document, new java.io.FileInputStream(tempFile));
-                contentStream.drawImage(pdfImage, 0, 0, bitmap.getWidth(), bitmap.getHeight());
-                contentStream.close();
-
-                File pdfFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "ImageToPDF.pdf");
-                document.save(pdfFile);
-                document.close();
-
-                runOnUiThread(() -> {
-                    progressBar.setVisibility(android.view.View.GONE);
-                    Toast.makeText(this, "PDF enregistré dans : " + pdfFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-                });
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                runOnUiThread(() -> {
-                    progressBar.setVisibility(android.view.View.GONE);
-                    Toast.makeText(this, "Erreur lors de la création du PDF.", Toast.LENGTH_SHORT).show();
-                });
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return rotateImage(imageBitmap, 90);
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return rotateImage(imageBitmap, 180);
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return rotateImage(imageBitmap, 270);
+                default:
+                    return imageBitmap;
             }
-        }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return imageBitmap;
+        }
+    }
+
+    private Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 }

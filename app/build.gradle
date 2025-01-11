@@ -55,8 +55,9 @@ dependencies {
     implementation libs.constraintlayout
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
-    implementation 'org.apache.pdfbox:pdfbox:2.0.27'
-
+    implementation libs.pdfbox
+    implementation libs.itext7.core
+    implementation libs.gridlayout
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

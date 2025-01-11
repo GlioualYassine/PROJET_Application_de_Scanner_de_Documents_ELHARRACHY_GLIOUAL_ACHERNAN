@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!-- Couleurs personnalisées -->
+    <color name="purple_500">#6200EE</color> <!-- Remplacez cette couleur par celle que vous voulez -->
+    <color name="teal_700">#018786</color>  <!-- Remplacez cette couleur par celle que vous voulez -->
+
+    <!-- Couleur de fond ou autre couleur supplémentaire si nécessaire -->
+    <color name="background_gray">#F5F5F5</color> <!-- Exemple d'une couleur supplémentaire -->
 </resources>
