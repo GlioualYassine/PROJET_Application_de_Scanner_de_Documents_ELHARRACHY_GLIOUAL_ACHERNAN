@@ -111,9 +111,15 @@ public class PDFActivity extends AppCompatActivity {
                 PdfDocument pdfDocument = new PdfDocument(writer);
                 Document document = new Document(pdfDocument);
 
-                // Ajouter l'image au PDF
+                // Définir les dimensions exactes de la page PDF
+                float pdfWidth = pdfDocument.getDefaultPageSize().getWidth();
+                float pdfHeight = pdfDocument.getDefaultPageSize().getHeight();
+
+                // Créer une image qui occupe toute la page
                 Image image = new Image(imageData);
-                image.setAutoScale(true); // S'adapte à la largeur du PDF
+                image.scaleAbsolute(pdfWidth, pdfHeight); // Adapter exactement aux dimensions de la page
+                image.setFixedPosition(0, 0); // Positionner à (0,0) pour couvrir toute la zone
+
                 document.add(image);
                 document.close();
 

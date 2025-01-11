@@ -57,6 +57,14 @@ dependencies {
     implementation libs.navigation.ui
     implementation libs.pdfbox
     implementation libs.itext7.core
+    implementation libs.jackson.databind
+    implementation libs.httpmime
+    implementation libs.okhttp
+    implementation libs.okhttp
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
+    implementation libs.json
     implementation libs.gridlayout
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit

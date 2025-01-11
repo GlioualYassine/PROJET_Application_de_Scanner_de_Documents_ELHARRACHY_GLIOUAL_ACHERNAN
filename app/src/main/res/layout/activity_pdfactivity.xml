@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Convertir en PDF"
-            android:background="@color/purple_500"
+            android:background="@drawable/rounded_button_purple"
             android:textColor="#FFFFFF"
             android:layout_marginEnd="8dp"
             android:padding="12dp"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Télécharger le PDF"
-            android:background="@color/teal_700"
+            android:background="@drawable/rounded_button_teal"
             android:textColor="#FFFFFF"
             android:padding="12dp"
             android:textStyle="bold" />
