@@ -5,8 +5,6 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,13 +15,27 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -57,8 +69,7 @@ public class OCRActivity extends AppCompatActivity {
         if (photoUriString != null) {
             Uri photoUri = Uri.parse(photoUriString);
             try {
-                File imageFile = new File(photoUri.getPath());
-                capturedBitmap = correctImageOrientation(imageFile.getAbsolutePath());
+                capturedBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(photoUri));
                 imageViewPreview.setImageBitmap(capturedBitmap);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -87,40 +98,6 @@ public class OCRActivity extends AppCompatActivity {
                 Toast.makeText(this, "Aucun texte à copier.", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private Bitmap correctImageOrientation(String imagePath) {
-        try {
-            ExifInterface exif = new ExifInterface(imagePath);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            Bitmap rotatedBitmap;
-
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    rotatedBitmap = rotateBitmap(bitmap, 90);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    rotatedBitmap = rotateBitmap(bitmap, 180);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    rotatedBitmap = rotateBitmap(bitmap, 270);
-                    break;
-                default:
-                    rotatedBitmap = bitmap;
-            }
-            return rotatedBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return BitmapFactory.decodeFile(imagePath);
-        }
-    }
-
-    private Bitmap rotateBitmap(Bitmap bitmap, int degrees) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degrees);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
     private void performOCR(Bitmap bitmap) {
@@ -192,7 +169,9 @@ public class OCRActivity extends AppCompatActivity {
         }).start();
     }
 
+    // Fonction pour nettoyer le texte
     private String cleanText(String text) {
+        // Exemple : supprimer les lignes contenant du code ou des métadonnées
         String[] lines = text.split("\n");
         StringBuilder cleanedText = new StringBuilder();
 
@@ -204,4 +183,5 @@ public class OCRActivity extends AppCompatActivity {
 
         return cleanedText.toString().trim();
     }
+
 }
