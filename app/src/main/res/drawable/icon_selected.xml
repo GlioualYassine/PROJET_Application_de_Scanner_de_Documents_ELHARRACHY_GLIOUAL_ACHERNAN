@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Cercle extérieur -->
+    <path
+        android:strokeWidth="4"
+        android:strokeColor="#9B51E0"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M24,2c12.15,0,22,9.85,22,22s-9.85,22-22,22-22-9.85-22-22S11.85,2,24,2Z" />
+    <!-- Cercle intérieur -->
+    <path
+        android:fillColor="#9B51E0"
+        android:pathData="M24,12c6.627,0,12,5.373,12,12s-5.373,12-12,12-12-5.373-12-12S17.373,12,24,12Z" />
+</vector>

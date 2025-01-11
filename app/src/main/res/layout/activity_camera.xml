@@ -18,98 +18,75 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnCaptureImage"
+        app:layout_constraintBottom_toTopOf="@id/buttonsContainer"
         android:background="#E0E0E0" />
 
-    <!-- Bouton pour capturer une image -->
-    <Button
-        android:id="@+id/btnCaptureImage"
+    <!-- Conteneur pour les boutons -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/buttonsContainer"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:minHeight="56dp"
-        android:text="Capturer une Image"
-        android:textColor="#FFF"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:backgroundTint="#9694FF"
-        android:elevation="4dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:stateListAnimator="@null"
-        android:letterSpacing="0.05"
-        android:textAllCaps="false"
-        app:cornerRadius="8dp"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnOCR"
-        android:layout_margin="16dp" />
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        android:layout_margin="16dp">
 
-    <!-- Bouton pour OCR -->
-    <Button
-        android:id="@+id/btnOCR"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:minHeight="56dp"
-        android:text="OCR"
-        android:textColor="#FFF"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:backgroundTint="#9694FF"
-        android:elevation="4dp"
-        android:stateListAnimator="@null"
-        android:letterSpacing="0.05"
-        android:textAllCaps="false"
-        app:cornerRadius="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnToPDF"
-        android:layout_margin="16dp" />
+        <!-- Bouton pour capturer une image -->
+        <Button
+            android:id="@+id/btnCaptureImage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Capturer une Image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="16dp" />
 
-    <!-- Bouton pour convertir en PDF -->
-    <Button
-        android:id="@+id/btnToPDF"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:minHeight="56dp"
-        android:text="Convertir en PDF"
-        android:textColor="#FFF"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:backgroundTint="#9694FF"
-        android:elevation="4dp"
-        android:stateListAnimator="@null"
-        android:letterSpacing="0.05"
-        android:textAllCaps="false"
-        app:cornerRadius="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnToCategories"
-        android:layout_margin="16dp" />
+        <!-- Bouton pour OCR -->
+        <Button
+            android:id="@+id/btnOCR"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="OCR"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnCaptureImage"
+            android:layout_marginBottom="16dp" />
 
-    <!-- Bouton pour organiser par catégories -->
-    <Button
-        android:id="@+id/btnToCategories"
+        <!-- Bouton pour convertir en PDF -->
+        <Button
+            android:id="@+id/btnToPDF"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Convertir en PDF"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnOCR"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Bouton pour organiser par catégories -->
+        <Button
+            android:id="@+id/btnToCategories"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Organiser par Catégories"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnToPDF" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Barre de navigation en bas -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:minHeight="56dp"
-        android:text="Organiser par Catégories"
-        android:textColor="#FFF"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:backgroundTint="#9694FF"
-        android:elevation="4dp"
-        android:stateListAnimator="@null"
-        android:letterSpacing="0.05"
-        android:textAllCaps="false"
-        app:cornerRadius="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+        app:menu="@menu/bottom_navigation_menu"
+        app:itemIconTint="@color/selector_bottom_navigation"
+        app:itemTextColor="@color/selector_bottom_navigation"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

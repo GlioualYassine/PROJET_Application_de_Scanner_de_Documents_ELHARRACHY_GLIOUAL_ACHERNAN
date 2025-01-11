@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="selected_color">#9BA2FF</color> <!-- Couleur pour l'élément sélectionné -->
+    <color name="unselected_color">#9E9E9E</color> <!-- Couleur pour l'élément non sélectionné -->
+
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <!-- Couleurs personnalisées -->

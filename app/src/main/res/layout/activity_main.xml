@@ -4,214 +4,161 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="#F8F9FC"
     tools:context=".MainActivity">
 
-    <!-- Barre de recherche -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/searchBar"
+    <!-- Barre supérieure -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:padding="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/etSearch"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:hint="Rechercher"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="#000"
-            android:textSize="16sp"
-            android:inputType="text" />
-    </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/tvDashboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dashboard Files"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#2C2C2C" />
+    </androidx.appcompat.widget.Toolbar>
 
-    <!-- Grille des boutons -->
-
-    <!-- Bouton "Actualiser" -->
-
-    <androidx.gridlayout.widget.GridLayout
+    <!-- Grille avec les boutons principaux -->
+    <LinearLayout
         android:id="@+id/mainOptionsGrid"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="42dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        app:alignmentMode="alignMargins"
-        app:useDefaultMargins="true"
-        app:columnCount="4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchBar">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Bouton "Smart Scan" -->
+        <!-- Scanner un document -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:clickable="true"
-            android:focusable="true"
+            android:orientation="vertical"
             android:gravity="center"
-            android:orientation="vertical">
+            android:layout_marginEnd="8dp">
 
             <ImageView
                 android:id="@+id/btnCamera"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:contentDescription="Smart Scan"
-                android:src="@drawable/ic_scan" />
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:tint="#9BA2FF"
+                android:src="@drawable/ic_scan"
+                android:contentDescription="Scanner" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="Smart Scan"
-                android:textColor="#9694FF"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="Scanner"
+                android:textColor="#9BA2FF"
+                android:textSize="14sp"
+                android:gravity="center" />
         </LinearLayout>
 
-        <!-- Bouton "PDF Tools" -->
+        <!-- Galerie -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:clickable="true"
-            android:focusable="true"
+            android:orientation="vertical"
             android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/btnPdfTools"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:contentDescription="PDF Tools"
-                android:src="@drawable/ic_pdf_tools" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="PDF Tools"
-                android:textColor="#9694FF"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Bouton "Import Picture" -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_marginEnd="25dp"
+            android:layout_marginStart="15dp">
 
             <ImageView
                 android:id="@+id/btnImportPicture"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:contentDescription="Import Picture"
-                android:src="@drawable/ic_import_picture" />
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:tint="#9BA2FF"
+                android:src="@drawable/ic_import_picture"
+                android:contentDescription="Galerie" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="Import Picture"
-                android:textColor="#9694FF"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="Galerie"
+                android:textColor="#9BA2FF"
+                android:textSize="14sp"
+                android:gravity="center" />
         </LinearLayout>
 
-        <!-- Bouton "Import File" -->
+        <!-- Catégories -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:clickable="true"
-            android:focusable="true"
+            android:orientation="vertical"
             android:gravity="center"
-            android:orientation="vertical">
+            android:layout_marginStart="8dp">
 
             <ImageView
-                android:id="@+id/btnImportFile"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:contentDescription="Import File"
-                android:src="@drawable/ic_import_file" />
+                android:id="@+id/btnCategories"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:tint="#9BA2FF"
+                android:src="@drawable/ic_categories"
+                android:contentDescription="Catégories" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="Import File"
-                android:textColor="#9694FF"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:text="Catégories"
+                android:textColor="#9BA2FF"
+                android:textSize="14sp"
+                android:gravity="center" />
         </LinearLayout>
-    </androidx.gridlayout.widget.GridLayout>
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/btnRefresh"
+    <!-- Section "Récents" -->
+    <TextView
+        android:id="@+id/tvRecentFiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Actualiser"
-        android:textColor="#FFF"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:backgroundTint="#9694FF"
-        android:elevation="4dp"
-        android:stateListAnimator="@null"
-        android:letterSpacing="0.05"
-        android:textAllCaps="false"
-        app:cornerRadius="8dp"
-        app:layout_constraintTop_toBottomOf="@id/mainOptionsGrid"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Section "Documents récents" -->
-
-    <!-- RecyclerView pour afficher les documents récents -->
-    <TextView
-        android:id="@+id/tvRecentDocs"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="128dp"
-        android:layout_marginTop="28dp"
-        android:text="Documents récents"
-        android:textColor="#000"
+        android:layout_marginStart="16dp"
+        android:text="Récents"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnRefresh" />
+        android:textColor="#2C2C2C"
+        app:layout_constraintTop_toBottomOf="@id/mainOptionsGrid"
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- RecyclerView pour afficher les fichiers récents -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/tvRecentDocs"
+        app:layout_constraintTop_toBottomOf="@id/tvRecentFiles"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+
+    <!-- Barre de navigation en bas -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"
+        app:menu="@menu/bottom_navigation_menu"
+        app:itemIconTint="@color/selector_bottom_navigation"
+        app:itemTextColor="@color/selector_bottom_navigation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

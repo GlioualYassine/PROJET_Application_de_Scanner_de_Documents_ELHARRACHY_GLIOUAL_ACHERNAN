@@ -22,6 +22,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -47,43 +49,84 @@ public class CameraActivity extends AppCompatActivity {
         imageViewPreview = findViewById(R.id.imageViewPreview);
         Button btnCaptureImage = findViewById(R.id.btnCaptureImage);
         Button btnToPDF = findViewById(R.id.btnToPDF);
+        Button btnToOCR = findViewById(R.id.btnOCR);
 
-        // Check camera permissions
+        // Vérifier si une image a été importée depuis la galerie
+        Intent intent = getIntent();
+        String importedImageUri = intent.getStringExtra("importedImageUri");
+        if (importedImageUri != null) {
+            photoUri = Uri.parse(importedImageUri); // Traiter l'image comme si elle venait de la caméra
+            imageViewPreview.setImageURI(photoUri);
+        }
+
+        // Vérifier les permissions pour la caméra
         checkCameraPermission();
+
+
+
+
+        // Initialiser le menu de navigation en bas
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+
+
+        bottomNavigationView.setSelectedItemId(R.id.nav_scan); // Forcer la sélection sur "Scan"
+
+// Gérer la navigation entre les éléments du menu
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                // Logique pour la page d'accueil
+                Intent homeIntent = new Intent(CameraActivity.this, MainActivity.class);
+                startActivity(homeIntent);
+                return true;
+            } else if (itemId == R.id.nav_scan) {
+                // Rester dans l'activité actuelle
+                Toast.makeText(this, "Déjà dans Scanner", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                // Logique pour la page du profil
+                Toast.makeText(this, "Profil (fonctionnalité à implémenter)", Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                return false;
+            }
+        });
+
 
         // Capture image
         btnCaptureImage.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
-                Toast.makeText(this, "Camera permission not granted.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission caméra non accordée.", Toast.LENGTH_SHORT).show();
                 checkCameraPermission();
             }
         });
 
-        // Navigate to PDFActivity with the captured image
+        // Convertir en PDF
         btnToPDF.setOnClickListener(v -> {
             if (photoUri != null) {
-                Intent intent = new Intent(CameraActivity.this, PDFActivity.class);
-                intent.putExtra("photoUri", photoUri.toString()); // Pass the image URI
-                startActivity(intent);
+                Intent pdfIntent = new Intent(CameraActivity.this, PDFActivity.class);
+                pdfIntent.putExtra("photoUri", photoUri.toString());
+                startActivity(pdfIntent);
             } else {
-                Toast.makeText(this, "No image captured to convert.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Aucune image disponible pour la conversion en PDF.", Toast.LENGTH_SHORT).show();
             }
         });
-        // Navigate to OCRActivity with the captured image
-        Button btnToOCR = findViewById(R.id.btnOCR);
+
+        // Appliquer l'OCR
         btnToOCR.setOnClickListener(v -> {
             if (photoUri != null) {
-                Intent intent = new Intent(CameraActivity.this, OCRActivity.class);
-                intent.putExtra("photoUri", photoUri.toString());
-                startActivity(intent);
+                Intent ocrIntent = new Intent(CameraActivity.this, OCRActivity.class);
+                ocrIntent.putExtra("photoUri", photoUri.toString());
+                startActivity(ocrIntent);
             } else {
-                Toast.makeText(this, "Capturez une image avant d'accéder à l'OCR.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Aucune image disponible pour l'OCR.", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
+
 
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {

@@ -1,15 +1,21 @@
 package ensa.application01.projetocr;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.widget.Button;
+import android.provider.MediaStore;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,7 +25,24 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ImageAdapter imageAdapter;
-    private List<File> imageList;
+    private List<File> recentFiles;
+
+    // Gestion des résultats pour l'importation d'image
+    private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri selectedImageUri = result.getData().getData();
+                    if (selectedImageUri != null) {
+                        // Transférer l'image à CameraActivity
+                        Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+                        intent.putExtra("importedImageUri", selectedImageUri.toString());
+                        startActivity(intent);
+                    }
+                } else {
+                    Toast.makeText(this, "Aucune image sélectionnée", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,44 +51,55 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialiser les boutons
         ImageView btnCamera = findViewById(R.id.btnCamera);
-        ImageView btnPdfTools = findViewById(R.id.btnPdfTools);
         ImageView btnImportPicture = findViewById(R.id.btnImportPicture);
-        ImageView btnImportFile = findViewById(R.id.btnImportFile);
-        Button btnRefresh = findViewById(R.id.btnRefresh); // Nouveau bouton "Actualiser"
+        ImageView btnCategories = findViewById(R.id.btnCategories);
 
-        // RecyclerView pour afficher les images capturées
+        // RecyclerView pour afficher les fichiers récents
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Charger les images capturées
-        imageList = loadCapturedImages();
-        imageAdapter = new ImageAdapter(imageList, this);
+        // Charger les fichiers récents
+        recentFiles = loadCapturedImages();
+        imageAdapter = new ImageAdapter(recentFiles, this);
         recyclerView.setAdapter(imageAdapter);
 
-        // Bouton pour ouvrir la page de la caméra
+        // Logique des boutons
         btnCamera.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CameraActivity.class);
             startActivity(intent);
         });
 
-        // Bouton pour les outils PDF
-        btnPdfTools.setOnClickListener(v -> {
-            Toast.makeText(this, "Outils PDF non implémentés", Toast.LENGTH_SHORT).show();
-        });
-
-        // Bouton pour importer une image
         btnImportPicture.setOnClickListener(v -> {
-            Toast.makeText(this, "Importer une image non implémenté", Toast.LENGTH_SHORT).show();
+            // Lancer l'intention pour sélectionner une image
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            galleryLauncher.launch(galleryIntent);
         });
 
-        // Bouton pour importer un fichier
-        btnImportFile.setOnClickListener(v -> {
-            Toast.makeText(this, "Importer un fichier non implémenté", Toast.LENGTH_SHORT).show();
+        btnCategories.setOnClickListener(v -> {
+            Toast.makeText(this, "Catégories (fonctionnalité à implémenter)", Toast.LENGTH_SHORT).show();
         });
 
-        // Bouton "Actualiser" pour recharger la liste
-        btnRefresh.setOnClickListener(v -> {
-            refreshImageList();
+        // Initialiser le menu de navigation en bas
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_home) {
+                // Logique pour la page d'accueil
+                Toast.makeText(this, "Accueil", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (itemId == R.id.nav_scan) {
+                // Ouvrir l'activité de la caméra
+                Intent cameraIntent = new Intent(MainActivity.this, CameraActivity.class);
+                startActivity(cameraIntent);
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                // Logique pour la page du profil
+                Toast.makeText(this, "Profil (fonctionnalité à implémenter)", Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                return false;
+            }
         });
     }
 
@@ -73,8 +107,6 @@ public class MainActivity extends AppCompatActivity {
      * Méthode pour actualiser la liste des images.
      */
     private void refreshImageList() {
-        imageList.clear();
-        imageList.addAll(loadCapturedImages());
         imageAdapter.notifyDataSetChanged();
         Toast.makeText(this, "Liste des images actualisée", Toast.LENGTH_SHORT).show();
     }
