@@ -32,46 +32,53 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+
+/**
+ * Classe CameraActivity qui gère les fonctionnalités liées à l'utilisation de la caméra.
+ * Elle inclut les fonctionnalités suivantes :
+ * - Vérification des permissions pour accéder à la caméra.
+ * - Capture d'images via la caméra et enregistrement des fichiers.
+ * - Affichage d'un aperçu de l'image capturée.
+ * - Navigation entre les différentes pages de l'application via un menu de navigation.
+ * - Conversion d'images en PDF ou application de l'OCR (reconnaissance optique des caractères).
+ * - Gestion de l'orientation des images pour un affichage correct.
+ */
 public class CameraActivity extends AppCompatActivity {
 
-    private static final int CAMERA_PERMISSION_CODE = 100;
-    private static final int CAMERA_REQUEST_CODE = 101;
+    private static final int CAMERA_PERMISSION_CODE = 100; // Code de permission pour la caméra
+    private static final int CAMERA_REQUEST_CODE = 101;    // Code pour la demande d'ouverture de la caméra
 
-    private ImageView imageViewPreview;
-    private Uri photoUri;
-    private File photoFile;
+    private ImageView imageViewPreview; // ImageView pour afficher l'image capturée
+    private Uri photoUri;               // URI de l'image capturée
+    private File photoFile;             // Fichier de l'image capturée
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        // Initialisation des vues
         imageViewPreview = findViewById(R.id.imageViewPreview);
         Button btnCaptureImage = findViewById(R.id.btnCaptureImage);
         Button btnToPDF = findViewById(R.id.btnToPDF);
         Button btnToOCR = findViewById(R.id.btnOCR);
 
-        // Vérifier si une image a été importée depuis la galerie
+        // Vérifie si une image a été importée depuis la galerie
         Intent intent = getIntent();
         String importedImageUri = intent.getStringExtra("importedImageUri");
         if (importedImageUri != null) {
-            photoUri = Uri.parse(importedImageUri); // Traiter l'image comme si elle venait de la caméra
+            photoUri = Uri.parse(importedImageUri); // Charger l'image importée
             imageViewPreview.setImageURI(photoUri);
         }
 
-        // Vérifier les permissions pour la caméra
+        // Vérifie et demande les permissions nécessaires pour utiliser la caméra
         checkCameraPermission();
 
-
-
-
-        // Initialiser le menu de navigation en bas
+        // Initialisation du menu de navigation en bas de l'écran
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setSelectedItemId(R.id.nav_scan); // Sélectionne par défaut l'onglet "Scan"
 
-
-        bottomNavigationView.setSelectedItemId(R.id.nav_scan); // Forcer la sélection sur "Scan"
-
-// Gérer la navigation entre les éléments du menu
+        // Gérer la navigation entre les éléments du menu
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
@@ -93,7 +100,7 @@ public class CameraActivity extends AppCompatActivity {
         });
 
 
-        // Capture image
+        /// Capture d'image via la caméra
         btnCaptureImage.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
