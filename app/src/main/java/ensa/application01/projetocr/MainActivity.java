@@ -147,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * Configure le RecyclerView pour afficher les catégories.
      */

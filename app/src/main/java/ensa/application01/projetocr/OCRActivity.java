@@ -32,6 +32,16 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
+/**
+ * Classe OCRActivity qui gère les fonctionnalités liées à la reconnaissance de texte (OCR).
+ * Elle inclut les fonctionnalités suivantes :
+ * - Sélection d'images pour effectuer la reconnaissance de texte.
+ * - Appel à une API OCR externe pour extraire le texte des images.
+ * - Affichage du texte extrait dans l'interface utilisateur.
+ * - Gestion des erreurs en cas de problème avec l'API ou la sélection d'image.
+ */
+
 public class OCRActivity extends AppCompatActivity {
 
     // Pour le log

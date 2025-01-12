@@ -26,6 +26,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 
+
+/**
+ * Classe PDFActivity qui gère les fonctionnalités liées à la gestion et au traitement des fichiers PDF.
+ * Elle inclut les fonctionnalités suivantes :
+ * - Chargement et affichage de fichiers PDF depuis l'appareil de l'utilisateur.
+ * - Extraction de texte ou d'éléments spécifiques à partir des fichiers PDF.
+ * - Navigation fluide entre les pages des documents PDF.
+ * - Gestion des erreurs en cas de fichier non valide ou de problème de chargement.
+ */
+
 public class PDFActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
