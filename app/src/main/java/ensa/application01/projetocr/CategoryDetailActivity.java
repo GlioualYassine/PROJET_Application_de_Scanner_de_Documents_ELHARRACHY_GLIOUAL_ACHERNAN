@@ -1,30 +1,21 @@
 package ensa.application01.projetocr;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ensa.application01.projetocr.adapters.CategoryPhotoAdapter;
 import ensa.application01.projetocr.models.Category;
 import ensa.application01.projetocr.services.CategoryService;
 import ensa.application01.projetocr.adapters.ImageAdapter;
 
 public class CategoryDetailActivity extends AppCompatActivity {
-
-    private CategoryService categoryService;
-    private Category currentCategory;
-    private TextView categoryNameTitle;
-    private List<String> images;
-    private ImageAdapter imageAdapter;
 
 
     @Override
@@ -33,14 +24,14 @@ public class CategoryDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_category_detail);
 
         // Initialiser les vues
-        categoryNameTitle = findViewById(R.id.categoryNameTitle);
+        TextView categoryNameTitle = findViewById(R.id.categoryNameTitle);
         RecyclerView photosRecyclerView = findViewById(R.id.photosRecyclerView);
 
         // Configurer le RecyclerView
         photosRecyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2 colonnes
 
         // Initialiser le service des catégories
-        categoryService = CategoryService.getInstance(this);
+        CategoryService categoryService = CategoryService.getInstance(this);
 
         // Récupérer l'ID de la catégorie depuis l'intent
         int categoryId = getIntent().getIntExtra("categoryId", -1);
@@ -51,7 +42,7 @@ public class CategoryDetailActivity extends AppCompatActivity {
         }
 
         // Charger la catégorie
-        currentCategory = categoryService.getCategoryById(categoryId);
+        Category currentCategory = categoryService.getCategoryById(categoryId);
         if (currentCategory == null) {
             Toast.makeText(this, "Erreur : Catégorie introuvable", Toast.LENGTH_SHORT).show();
             finish();
@@ -62,8 +53,9 @@ public class CategoryDetailActivity extends AppCompatActivity {
         categoryNameTitle.setText(currentCategory.getName());
 
         // Charger les images
-        images = new ArrayList<>(currentCategory.getImages());
-        imageAdapter = new ImageAdapter(images, imagePath -> {
+        List<String> images = new ArrayList<>(currentCategory.getImages());
+        // Action pour supprimer une image si nécessaire
+        ImageAdapter imageAdapter = new ImageAdapter(images, imagePath -> {
             // Action pour supprimer une image si nécessaire
         });
         photosRecyclerView.setAdapter(imageAdapter);
