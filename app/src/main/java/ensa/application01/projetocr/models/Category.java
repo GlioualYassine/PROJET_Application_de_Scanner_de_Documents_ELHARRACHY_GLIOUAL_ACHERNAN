@@ -1,5 +1,6 @@
 package ensa.application01.projetocr.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
@@ -18,6 +19,8 @@ public class Category {
     public void setId(int id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    public List<String> getImages() { return images; }
+    public List<String> getImages() {
+        return images != null ? images : new ArrayList<>();
+    }
     public void setImages(List<String> images) { this.images = images; }
 }
