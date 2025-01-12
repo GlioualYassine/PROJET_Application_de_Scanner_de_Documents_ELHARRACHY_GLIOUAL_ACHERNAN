@@ -23,10 +23,14 @@ import ensa.application01.projetocr.models.Category;
 import ensa.application01.projetocr.services.CategoryService;
 
 /**
- * MainActivity class that handles the main screen of the application.
- * It includes functionality for launching the camera, importing pictures,
- * managing categories, and navigating through the bottom navigation bar.
+ * Classe MainActivity qui gère l'écran principal de l'application.
+ * Elle inclut les fonctionnalités suivantes :
+ * - Lancement de la caméra pour capturer des images.
+ * - Importation d'images depuis la galerie.
+ * - Gestion des catégories (ajout, mise à jour et affichage des catégories).
+ * - Navigation via la barre de navigation inférieure (Accueil, Scan, Profil).
  */
+
 public class MainActivity extends AppCompatActivity {
 
     private CategoryService categoryService;
