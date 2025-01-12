@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -15,14 +16,16 @@ import java.util.List;
 import ensa.application01.projetocr.adapters.CategoryPhotoAdapter;
 import ensa.application01.projetocr.models.Category;
 import ensa.application01.projetocr.services.CategoryService;
+import ensa.application01.projetocr.adapters.ImageAdapter;
 
 public class CategoryDetailActivity extends AppCompatActivity {
 
     private CategoryService categoryService;
-    private CategoryPhotoAdapter photoAdapter;
-    private TextView categoryNameTitle;
     private Category currentCategory;
-    private List<String> validPhotos;
+    private TextView categoryNameTitle;
+    private List<String> images;
+    private ImageAdapter imageAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,58 +37,41 @@ public class CategoryDetailActivity extends AppCompatActivity {
         RecyclerView photosRecyclerView = findViewById(R.id.photosRecyclerView);
 
         // Configurer le RecyclerView
-        photosRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        photoAdapter = new CategoryPhotoAdapter(this);
-        photosRecyclerView.setAdapter(photoAdapter);
+        photosRecyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2 colonnes
+
+        // Initialiser le service des catégories
+        categoryService = CategoryService.getInstance(this);
 
         // Récupérer l'ID de la catégorie depuis l'intent
         int categoryId = getIntent().getIntExtra("categoryId", -1);
-        if (categoryId != -1) {
-            loadCategory(categoryId);
-        } else {
-            Toast.makeText(this, "Erreur : catégorie non trouvée", Toast.LENGTH_SHORT).show();
+        if (categoryId == -1) {
+            Toast.makeText(this, "Erreur : ID de catégorie invalide", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
-    }
 
-    private void loadCategory(int categoryId) {
-        categoryService = CategoryService.getInstance(this);
+        // Charger la catégorie
         currentCategory = categoryService.getCategoryById(categoryId);
-
-        if (currentCategory != null) {
-            // Afficher le nom de la catégorie
-            categoryNameTitle.setText(currentCategory.getName());
-
-            // Charger les photos associées à la catégorie
-            List<String> photos = categoryService.getCategoryPhotos(categoryId);
-            validPhotos = new ArrayList<>();
-
-            for (String photoUri : photos) {
-                if (isUriAccessible(photoUri)) {
-                    validPhotos.add(photoUri);
-                }
-            }
-
-            if (validPhotos.isEmpty()) {
-                Toast.makeText(this, "Aucune image disponible pour cette catégorie.", Toast.LENGTH_SHORT).show();
-            }
-
-            // Mettre à jour l'adaptateur avec les photos valides
-            photoAdapter.setPhotos(validPhotos);
-        } else {
-            Toast.makeText(this, "Erreur : catégorie introuvable", Toast.LENGTH_SHORT).show();
+        if (currentCategory == null) {
+            Toast.makeText(this, "Erreur : Catégorie introuvable", Toast.LENGTH_SHORT).show();
             finish();
+            return;
+        }
+
+        // Afficher le nom de la catégorie
+        categoryNameTitle.setText(currentCategory.getName());
+
+        // Charger les images
+        images = new ArrayList<>(currentCategory.getImages());
+        imageAdapter = new ImageAdapter(images, imagePath -> {
+            // Action pour supprimer une image si nécessaire
+        });
+        photosRecyclerView.setAdapter(imageAdapter);
+
+        // Vérifier si aucune image n'est disponible
+        if (images.isEmpty()) {
+            Toast.makeText(this, "Aucune image disponible pour cette catégorie.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private boolean isUriAccessible(String uriString) {
-        try {
-            Uri uri = Uri.parse(uriString);
-            getContentResolver().openInputStream(uri).close();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 }
