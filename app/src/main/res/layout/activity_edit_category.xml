@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -10,24 +11,53 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Nom de la catégorie"
+        android:layout_marginTop="32dp"
         android:textSize="16sp" />
 
     <Button
         android:id="@+id/addImageButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ajouter une image" />
+        android:layout_height="56dp"
+        android:minHeight="56dp"
+        android:text="Ajouter une image"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:backgroundTint="#9BA2FF"
+        android:layout_marginTop="16dp"
+        android:elevation="4dp"
+        android:stateListAnimator="@null"
+        android:letterSpacing="0.05"
+        android:textAllCaps="false"
+        app:cornerRadius="8dp"
+        app:rippleColor="#33FFFFFF" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewImages"
+        android:layout_marginTop="24dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/saveCategoryButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Enregistrer" />
+        android:layout_height="56dp"
+        android:minHeight="56dp"
+        android:layout_marginTop="24dp"
+        android:text="Enregistrer"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:backgroundTint="#9BA2FF"
+        android:elevation="4dp"
+        android:stateListAnimator="@null"
+        android:letterSpacing="0.05"
+        android:textAllCaps="false"
+        app:cornerRadius="8dp"
+        app:rippleColor="#33FFFFFF" />
+
 </LinearLayout>

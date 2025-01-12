@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
     android:background="#FFFFFF">
@@ -39,21 +39,43 @@
         <Button
             android:id="@+id/btnPerformOCR"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
+            android:minHeight="56dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="Reconnaître le Texte"
-            android:background="@drawable/rounded_button_purple"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:backgroundTint="#9BA2FF"
+            android:elevation="4dp"
+            android:stateListAnimator="@null"
+            android:letterSpacing="0.05"
+            android:textAllCaps="false"
+            app:cornerRadius="8dp"
+            app:rippleColor="#33FFFFFF" />
 
         <Button
             android:id="@+id/btnCopyText"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
+            android:minHeight="56dp"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:text="Copier le Texte"
-            android:background="@drawable/rounded_button_teal"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:backgroundTint="#9BA2FF"
+            android:elevation="4dp"
+            android:stateListAnimator="@null"
+            android:letterSpacing="0.05"
+            android:textAllCaps="false"
+            app:cornerRadius="8dp"
+            app:rippleColor="#33FFFFFF" />
     </LinearLayout>
 </LinearLayout>
