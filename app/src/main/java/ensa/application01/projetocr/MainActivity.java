@@ -3,98 +3,104 @@ package ensa.application01.projetocr;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
+import ensa.application01.projetocr.adapters.MainCategoryAdapter;
+import ensa.application01.projetocr.models.Category;
+import ensa.application01.projetocr.services.CategoryService;
+
+/**
+ * MainActivity class that handles the main screen of the application.
+ * It includes functionality for launching the camera, importing pictures,
+ * managing categories, and navigating through the bottom navigation bar.
+ */
 public class MainActivity extends AppCompatActivity {
 
-    // Lanceur d'activité pour gérer le résultat de l'importation d'une image depuis la galerie
+    private CategoryService categoryService;
+
+    // Launcher for the gallery activity to pick an image
     private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
-                // Vérifie si une image a été sélectionnée avec succès
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Uri selectedImageUri = result.getData().getData(); // URI de l'image sélectionnée
+                    Uri selectedImageUri = result.getData().getData();
                     if (selectedImageUri != null) {
-                        // Démarre CameraActivity et transfère l'URI de l'image importée
                         Intent intent = new Intent(MainActivity.this, CameraActivity.class);
                         intent.putExtra("importedImageUri", selectedImageUri.toString());
                         startActivity(intent);
                     }
                 } else {
-                    // Affiche un message si aucune image n'a été sélectionnée
                     Toast.makeText(this, "Aucune image sélectionnée", Toast.LENGTH_SHORT).show();
                 }
-            }
-    );
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialisation des boutons pour les différentes fonctionnalités
-        ImageView btnCamera = findViewById(R.id.btnCamera); // Bouton pour ouvrir la caméra
-        ImageView btnImportPicture = findViewById(R.id.btnImportPicture); // Bouton pour importer une image
-        ImageView btnCategories = findViewById(R.id.btnCategories); // Bouton pour les catégories (non implémenté)
+        // Initialize the category service
+        categoryService = CategoryService.getInstance(this);
 
-        // Configuration du RecyclerView pour afficher les fichiers récents
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Setup the categories RecyclerView
+        setupCategoriesRecyclerView();
 
-        // Chargement des fichiers récents et configuration de l'adaptateur
-        List<File> recentFiles = loadCapturedImages(); // Récupère la liste des fichiers d'images
-        ImageAdapter imageAdapter = new ImageAdapter(recentFiles, this);
-        recyclerView.setAdapter(imageAdapter);
+        // Initialize buttons
+        ImageView btnCamera = findViewById(R.id.btnCamera);
+        ImageView btnImportPicture = findViewById(R.id.btnImportPicture);
+        ImageView btnCategories = findViewById(R.id.btnCategories);
 
-        // Gestion des clics sur le bouton pour ouvrir la caméra
+        // Set onClick listener for the camera button
         btnCamera.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CameraActivity.class);
-            startActivity(intent); // Démarre CameraActivity
+            startActivity(intent);
         });
 
-        // Gestion des clics sur le bouton pour importer une image
+        // Set onClick listener for the import picture button
         btnImportPicture.setOnClickListener(v -> {
-            // Lance une intention pour sélectionner une image dans la galerie
             Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            galleryLauncher.launch(galleryIntent); // Démarre le processus de sélection d'image
+            galleryLauncher.launch(galleryIntent);
         });
 
-        // Gestion des clics sur le bouton des catégories (fonctionnalité à implémenter)
-        btnCategories.setOnClickListener(v ->
-                Toast.makeText(this, "Catégories (fonctionnalité à implémenter)", Toast.LENGTH_SHORT).show()
-        );
+        // Set onClick listener for the categories button
+        btnCategories.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CategoryManagementActivity.class);
+            startActivityForResult(intent, 2); // Request code 2
+        });
 
-        // Initialisation du menu de navigation en bas de l'écran
+        // Initialize the show all categories button
+        Button btnShowAllCategories = findViewById(R.id.btnShowAllCategories);
+        btnShowAllCategories.setOnClickListener(v -> {
+            // Launch an activity to show all categories
+            Intent intent = new Intent(MainActivity.this, CategoryManagementActivity.class);
+            startActivityForResult(intent, 3); // Request code to show all categories
+        });
+
+        // Configure the bottom navigation
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId(); // Identifiant de l'élément sélectionné
-
+            int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
-                // Affiche un message pour la page d'accueil
                 Toast.makeText(this, "Accueil", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (itemId == R.id.nav_scan) {
-                // Ouvre CameraActivity pour scanner
                 Intent cameraIntent = new Intent(MainActivity.this, CameraActivity.class);
                 startActivity(cameraIntent);
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                // Affiche un message pour la page de profil (non implémentée)
                 Toast.makeText(this, "Profil (fonctionnalité à implémenter)", Toast.LENGTH_SHORT).show();
                 return true;
             } else {
@@ -103,28 +109,67 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Charge les images capturées à partir du répertoire local défini pour l'application.
-     *
-     * @return Une liste contenant les fichiers d'images au format JPG.
-     */
-    private List<File> loadCapturedImages() {
-        // Détermine le répertoire local où les images capturées sont stockées
-        File storageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "MyCapturedImages");
-        List<File> images = new ArrayList<>();
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        // Vérifie si le répertoire existe et contient des fichiers
-        if (storageDir.exists() && storageDir.isDirectory()) {
-            File[] files = storageDir.listFiles(); // Récupère la liste des fichiers dans le répertoire
-            if (files != null) {
-                for (File file : files) {
-                    // Ajoute uniquement les fichiers au format JPG à la liste
-                    if (file.isFile() && file.getName().endsWith(".jpg")) {
-                        images.add(file);
+        // Retrieve updated categories
+        List<Category> updatedCategories = categoryService.getCategories();
+
+        // Update the adapter with the top 4 categories
+        RecyclerView recyclerView = findViewById(R.id.categoriesRecyclerView);
+        MainCategoryAdapter adapter = (MainCategoryAdapter) recyclerView.getAdapter();
+        if (adapter != null) {
+            adapter.updateTopCategories(updatedCategories);
+        }
+    }
+
+    /**
+     * Setup the RecyclerView for displaying categories.
+     */
+    private void setupCategoriesRecyclerView() {
+        RecyclerView recyclerView = findViewById(R.id.categoriesRecyclerView);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // 2-column grid layout
+
+        List<Category> categories = categoryService.getCategories(); // Retrieve all categories
+        MainCategoryAdapter adapter = new MainCategoryAdapter(this, categories,
+                new MainCategoryAdapter.OnCategoryClickListener() {
+                    @Override
+                    public void onCategoryClick(Category category) {
+                        // Action when a category is clicked
+                        Intent intent = new Intent(MainActivity.this, CategoryDetailActivity.class);
+                        intent.putExtra("categoryId", category.getId());
+                        startActivity(intent);
                     }
-                }
+
+                    @Override
+                    public void onShowMoreClick() {
+                        // Action to show all categories
+                        Intent intent = new Intent(MainActivity.this, CategoryManagementActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+        recyclerView.setAdapter(adapter);
+
+        // Update the top 4 categories
+        adapter.updateTopCategories(categories);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 3 && resultCode == RESULT_OK) { // Request code to handle updates
+            // Retrieve updated categories
+            List<Category> updatedCategories = categoryService.getCategories();
+
+            // Update only the top 4 categories
+            RecyclerView recyclerView = findViewById(R.id.categoriesRecyclerView);
+            MainCategoryAdapter adapter = (MainCategoryAdapter) recyclerView.getAdapter();
+            if (adapter != null) {
+                adapter.updateTopCategories(updatedCategories);
             }
         }
-        return images; // Retourne la liste des fichiers d'images
     }
 }
