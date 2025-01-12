@@ -15,17 +15,20 @@ import ensa.application01.projetocr.models.Category;
 import ensa.application01.projetocr.services.CategoryService;
 import ensa.application01.projetocr.adapters.ImageAdapter;
 
+
+
+/**
+ * Classe CategoryDetailActivity qui gère l'affichage des détails d'une catégorie spécifique.
+ * Elle inclut les fonctionnalités suivantes :
+ * - Chargement des informations d'une catégorie à partir de son ID.
+ * - Affichage du nom de la catégorie en haut de l'écran.
+ * - Affichage d'une grille d'images associées à la catégorie.
+ * - Gestion des erreurs en cas d'ID de catégorie invalide ou de catégorie introuvable.
+ * - Vérification de la disponibilité des images et affichage d'un message approprié si aucune image n'est disponible.
+ */
+
 public class CategoryDetailActivity extends AppCompatActivity {
 
-    /**
-     * Classe CategoryDetailActivity qui gère l'affichage des détails d'une catégorie spécifique.
-     * Elle inclut les fonctionnalités suivantes :
-     * - Chargement des informations d'une catégorie à partir de son ID.
-     * - Affichage du nom de la catégorie en haut de l'écran.
-     * - Affichage d'une grille d'images associées à la catégorie.
-     * - Gestion des erreurs en cas d'ID de catégorie invalide ou de catégorie introuvable.
-     * - Vérification de la disponibilité des images et affichage d'un message approprié si aucune image n'est disponible.
-     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
