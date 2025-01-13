@@ -62,6 +62,7 @@ public class CameraActivity extends AppCompatActivity {
         Button btnCaptureImage = findViewById(R.id.btnCaptureImage);
         Button btnToPDF = findViewById(R.id.btnToPDF);
         Button btnToOCR = findViewById(R.id.btnOCR);
+        Button btnToCategory = findViewById(R.id.btnToCategories);
 
         // Vérifie si une image a été importée depuis la galerie
         Intent intent = getIntent();
@@ -91,8 +92,8 @@ public class CameraActivity extends AppCompatActivity {
                 Toast.makeText(this, "Déjà dans Scanner", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                // Logique pour la page du profil
-                Toast.makeText(this, "Profil (fonctionnalité à implémenter)", Toast.LENGTH_SHORT).show();
+                Intent ProfileIntent = new Intent(this, ProfileActivity.class);
+                startActivity(ProfileIntent);
                 return true;
             } else {
                 return false;
@@ -131,6 +132,21 @@ public class CameraActivity extends AppCompatActivity {
                 Toast.makeText(this, "Aucune image disponible pour l'OCR.", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        // Ajouter a une catégorie:
+        btnToCategory.setOnClickListener(v -> {
+            if (photoUri != null) {
+                // Create an intent to launch the CategoryManagementActivity
+                Intent addToCategoryIntent = new Intent(this, AddToCategoryActivity.class);
+                addToCategoryIntent.putExtra("photoUri", photoUri.toString());
+                addToCategoryIntent.putExtra("isSelectMode", true); // Indicate selection mode
+                startActivity(addToCategoryIntent); // Start the activity
+            } else {
+                Toast.makeText(this, "Aucune image disponible pour l'ajout à une catégorie.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
     }
 

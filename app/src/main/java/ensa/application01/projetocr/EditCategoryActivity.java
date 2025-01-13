@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import ensa.application01.projetocr.adapters.CategoryAdapter;
 import ensa.application01.projetocr.adapters.ImageAdapter;
 import ensa.application01.projetocr.models.Category;
 import ensa.application01.projetocr.services.CategoryService;
@@ -24,6 +25,7 @@ import ensa.application01.projetocr.services.CategoryService;
 public class EditCategoryActivity extends AppCompatActivity {
 
     private CategoryService categoryService;
+    private CategoryAdapter categoryAdapter;
     private Category category;
     private EditText categoryName;
     private List<String> images;
@@ -50,6 +52,7 @@ public class EditCategoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_category);
 
         categoryService = new CategoryService(this);
+        categoryAdapter = new CategoryAdapter(categoryService.getCategories(), this);
 
         int categoryId = getIntent().getIntExtra("categoryId", -1);
         if (categoryId == -1) {
@@ -59,10 +62,17 @@ public class EditCategoryActivity extends AppCompatActivity {
         }
 
         category = categoryService.getCategoryById(categoryId);
+
         if (category == null) {
-            Toast.makeText(this, "Erreur : Catégorie introuvable", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
+            int incremental = 1;
+            String startName = "Nouvelle Catégorie " + incremental;
+            while (categoryService.isCategoryNameExists(startName)) {
+                incremental++;
+                startName = "Nouvelle Catégorie " + incremental;
+            }
+            category = new Category(categoryId, startName, new ArrayList<>());
+            categoryService.addCategory(category);
+            categoryAdapter.addCategory(category);
         }
 
         categoryName = findViewById(R.id.editCategoryName);
@@ -71,7 +81,7 @@ public class EditCategoryActivity extends AppCompatActivity {
         images = new ArrayList<>(category.getImages());
         RecyclerView recyclerView = findViewById(R.id.recyclerViewImages);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        imageAdapter = new ImageAdapter(images, imagePath -> {
+        imageAdapter = new ImageAdapter(this, images, imagePath -> {
             images.remove(imagePath);
             imageAdapter.notifyDataSetChanged();
         });

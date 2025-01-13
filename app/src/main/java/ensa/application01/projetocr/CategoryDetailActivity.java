@@ -67,7 +67,7 @@ public class CategoryDetailActivity extends AppCompatActivity {
         // Charger les images
         List<String> images = new ArrayList<>(currentCategory.getImages());
         // Action pour supprimer une image si nécessaire
-        ImageAdapter imageAdapter = new ImageAdapter(images, imagePath -> {
+        ImageAdapter imageAdapter = new ImageAdapter(this, images, imagePath -> {
             // Action pour supprimer une image si nécessaire
         });
         photosRecyclerView.setAdapter(imageAdapter);

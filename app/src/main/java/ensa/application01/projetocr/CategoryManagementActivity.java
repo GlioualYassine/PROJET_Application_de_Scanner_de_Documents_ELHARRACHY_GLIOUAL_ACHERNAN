@@ -19,6 +19,8 @@ public class CategoryManagementActivity extends AppCompatActivity {
     private CategoryService categoryService;
     private CategoryAdapter categoryAdapter;
 
+    private static final int ADD_CATEGORY_REQUEST = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,10 +47,16 @@ public class CategoryManagementActivity extends AppCompatActivity {
 
     private void addCategory() {
         // Ajouter une nouvelle catégorie (exemple)
+//        int newId = categoryAdapter.getItemCount() + 1;
+//        Category newCategory = new Category(newId, "Nouvelle Catégorie", null);
+//        categoryService.addCategory(newCategory);
+//        categoryAdapter.addCategory(newCategory);
+
+        // Ajouter une nouvelle catégorie
         int newId = categoryAdapter.getItemCount() + 1;
-        Category newCategory = new Category(newId, "Nouvelle Catégorie", null);
-        categoryService.addCategory(newCategory);
-        categoryAdapter.addCategory(newCategory);
+        Intent intent = new Intent(this, EditCategoryActivity.class);
+        intent.putExtra("categoryId", newId);
+        startActivityForResult(intent, ADD_CATEGORY_REQUEST);
     }
 
     @Override

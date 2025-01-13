@@ -38,6 +38,12 @@
             android:exported="false" />
         <activity
             android:name=".CameraActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddToCategoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
             android:exported="false" /> <!-- Configuration du FileProvider -->
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item
+        android:id="@+id/option_convert_pdf"
+        android:title="Convertir PDF" />
+    <item
+        android:id="@+id/option_ocr"
+        android:title="OCR" />
+    <item
+        android:id="@+id/option_cloud"
+        android:title="Sync dans le cloud" />
+    <item
+        android:id="@+id/option_delete"
+        android:title="Supprimer" />
+</menu>
+
+

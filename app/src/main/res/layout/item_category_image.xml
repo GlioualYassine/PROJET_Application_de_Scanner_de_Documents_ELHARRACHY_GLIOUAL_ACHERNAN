@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-    <!-- ImageView pour afficher l'image de la catégorie -->
+    <!-- ImageView for displaying the category image -->
     <ImageView
         android:id="@+id/imageCategoryView"
         android:layout_width="100dp"
@@ -16,16 +16,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- Bouton pour supprimer l'image -->
-    <ImageView
-        android:id="@+id/deleteCategoryImageButton"
+    <!-- Dropdown menu button -->
+    <ImageButton
+        android:id="@+id/dropdownMenuButton"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginStart="8dp"
+        app:tint="#9BA2FF"
         android:layout_marginTop="8dp"
-        android:src="@drawable/ic_delete"
-        android:contentDescription="Supprimer l'image"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Menu Options"
+        app:srcCompat="@drawable/ic_more_vert"
         app:layout_constraintEnd_toEndOf="@+id/imageCategoryView"
-        app:layout_constraintTop_toTopOf="@+id/imageCategoryView" />
+        app:layout_constraintTop_toTopOf="@+id/imageCategoryView"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

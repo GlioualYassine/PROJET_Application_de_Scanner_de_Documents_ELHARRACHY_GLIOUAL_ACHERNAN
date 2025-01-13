@@ -1,6 +1,8 @@
 package ensa.application01.projetocr;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
+import java.util.Random;
 
 import ensa.application01.projetocr.adapters.MainCategoryAdapter;
 import ensa.application01.projetocr.models.Category;
@@ -104,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 3); // Code de requête pour afficher toutes les catégories
         });
 
+
         // Configuration de la navigation inférieure
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -120,7 +124,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             } else if (itemId == R.id.nav_profile) {
-                Toast.makeText(this, "Profil (fonctionnalité à implémenter)", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, ProfileActivity.class);
+                startActivity(intent);
                 return true;
 
             } else {

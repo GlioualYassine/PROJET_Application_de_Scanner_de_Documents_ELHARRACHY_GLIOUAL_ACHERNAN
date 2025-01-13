@@ -96,6 +96,18 @@ public class CategoryService {
         return null;
     }
 
+    // Verifier si le nom existe
+    public boolean isCategoryNameExists(String name) {
+        List<Category> categories = getCategories();
+        for (Category category : categories) {
+            // Compare names case-insensitively and ignore leading/trailing spaces
+            if (category.getName().trim().equalsIgnoreCase(name.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Sauvegarder les catégories dans le fichier
     private void saveCategories(List<Category> categories) {
         try (FileWriter writer = new FileWriter(storageFile)) {
