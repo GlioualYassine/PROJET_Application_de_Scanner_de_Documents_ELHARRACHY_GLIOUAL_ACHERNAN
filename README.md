@@ -1,4 +1,4 @@
-﻿# MPROJET_Application_de_Scanner_de_Documents_EL HARRACHY_GLIOUAL_ACHERNAN
+﻿# PROJET_Application_de_Scanner_de_Documents_EL HARRACHY_GLIOUAL_ACHERNAN
 ## SCANME - Application Mobile de Gestion Documentaire
 
 **SCANME** est une application mobile Android conçue pour numériser, organiser et gérer des documents. Elle intègre des fonctionnalités avancées telles que la conversion en PDF, l'extraction de texte via OCR, et la synchronisation sécurisée avec Google Drive.
