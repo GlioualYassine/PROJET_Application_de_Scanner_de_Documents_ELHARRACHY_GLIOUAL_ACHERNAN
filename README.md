@@ -25,4 +25,4 @@
 ## ⚙️ **Installation**
 1. Clonez ce dépôt sur votre machine locale :
    ```bash
-   git https://github.com/GlioualYassine/MobileProject_Document_Scanner.git
+   git clone https://github.com/GlioualYassine/PROJET_Application_de_Scanner_de_Documents_ELHARRACHY_GLIOUAL_ACHERNAN.git
